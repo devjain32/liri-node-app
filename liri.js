@@ -1,20 +1,48 @@
 require("dotenv").config();
 var keys = require("./keys.js");
-var spotifyKey = new Spotify(keys.spotify);
-//Client ID da9e2ec7a22545079278eae1423a9c24
-//Client Secret 00fca226feab47da9a5d8c6ec63f30ee
+//var spotifyKey = new Spotify(keys.spotify);
+var axios = require("axios");
+var moment = require("moment");
+var fs = require("fs");
+var keys = require("./keys.js");
+var Spotify = require("node-spotify-api");
+var requestFunction = process.argv[2];
+var requestName;
 
-var Spotify = require('node-spotify-api');
+var spotify = new Spotify(keys.spotify);
 
-var spotify = new Spotify({
-    id: "da9e2ec7a22545079278eae1423a9c24",
-    secret: "00fca226feab47da9a5d8c6ec63f30ee"
-});
+for (var i = 3 ; i < process.argv.length ; i++) {
+    requestName +=process.argv[i];
+}
 
-spotify.search({ type: 'track', query: 'All the Small Things' }, function (err, data) {
-    if (err) {
-        return console.log('Error occurred: ' + err);
-    }
 
-    console.log(data);
-});
+if (requestFunction === "concert-this") {
+    concert();
+}
+else if (requestFunction === "spotify-this-song") {
+    spotify();
+}
+else if (requestFunction === "movie-this") {
+    movie();
+}
+else if (requestFunction === "do-what-it-says") {
+    doWhatItSays();
+}
+
+
+
+var getSpotify = function(songName) {
+    spotify.search({ 
+        type: 'track', 
+        query: songName
+    }, function (err, data) {
+        if (err) {
+            console.log('Error occurred: ' + err);
+            return;
+        }
+    
+        console.log(data.tracks.items);
+    });
+}
+
+getSpotify("despacito");
